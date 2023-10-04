@@ -1,0 +1,22 @@
+{% extends 'accounts/utility/base.html' %}
+{%load static%}
+{%block content%}
+<br>
+<div class="row">
+    <div class="col-md-9">
+        <div class="card card-body">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{formset.management_form}} 
+                <!-- //handle each form in the set when submit the whole -->
+                {%for form in formset%}
+                    {{form}}
+                    <hr>
+                {%endfor%}
+                <br>
+                <input class="btn btn-sml btn-info" type="submit" name="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}

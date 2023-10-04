@@ -1,0 +1,24 @@
+{%load static%}
+<style>
+    .hello-msg{
+        font-size: 18px;
+        color:white;
+        padding-right:15px;
+    }
+</style>
+<nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <img src="{% static 'images/logo.png' %}" id="logo" class="navbar-logo">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+            <a class="nav-link" href="#">Features</a>
+        </div>
+
+    </div>
+    <span class="hello-msg">Hello, {{ request.user }}</span>
+    <span><a class="hello-msg" href="{% url 'logout_account' %}">Logout</a></span>
+</nav>
