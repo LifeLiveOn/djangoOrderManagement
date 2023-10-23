@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.contrib.auth.models import Group
 
 
 def unauthenticated_user(view_func):
@@ -19,6 +20,7 @@ def unauthenticated_user(view_func):
     """
 
     def wrapper_func(request, *args, **kwargs):
+
         if request.user.is_authenticated:
             return redirect('home')
         else:
@@ -46,10 +48,10 @@ def allow_users(allowed_roles: list[str]):
 
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
-            group = None
-            if request.user.groups.exists():
-                group = request.user.groups.all()[0].name
-            if group in allowed_roles:
+            groups = request.user.groups.all()
+
+            # If the user is a member of any of the allowed groups, execute the view function
+            if any(group.name in allowed_roles for group in groups):
                 return view_func(request, *args, **kwargs)
             else:
                 return HttpResponse("You are not authorized to view this page")
@@ -77,11 +79,15 @@ def admin_only(view_func):
     """
 
     def wrapper_func(request, *args, **kwargs):
-        if request.user.groups.exists():
-            group = request.user.groups.all()[0].name
-            if group == 'customer':
-                return redirect('user')
-            if group == 'admin':
-                return view_func(request, *args, **kwargs)
+        groups = request.user.groups.all()
+        group_names = {group.name for group in groups}
+
+        if 'customer' in group_names and len(group_names) == 1:
+            return redirect('user')
+        elif 'admin' in group_names:
+            return view_func(request, *args, **kwargs)
+        else:
+            return HttpResponse("You are not authorized to view this page")
 
     return wrapper_func
+

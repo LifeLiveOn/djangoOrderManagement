@@ -1,0 +1,48 @@
+{% extends 'accounts/utility/base.html' %}
+{% load static %}
+
+{% block content %}
+    <style>
+        .profile-pic {
+            max-width: 300px;
+            max-height: 350px;
+
+            border-radius: 50%;
+            /* Optional: Adds a border */
+            border: 2px solid #eee;
+
+            /* Ensures the image scales and centers correctly */
+            object-fit: cover;
+            display: block;
+
+            /* Optional: Adds some shadow for depth */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-body">
+                    <a class="btn btn-warning" href="{% url 'home' %}"><- Back to Profile</a>
+                    <hr>
+                    <h2>Account Setting</h2>
+                    <hr>
+
+                    <img class="profile-pic" src="{{ request.user.customer.profile_pic.url }}">
+
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card card-body">
+                    <form method="post" action="{% url 'settings' %}"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type='submit' value="update" class="btn btn-primary" name="Update Information">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

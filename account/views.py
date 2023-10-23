@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
-from django.forms import inlineformset_factory
-
-from .decorators import unauthenticated_user, allow_users, admin_only
-from .models import *
-from .filter import OrderFilter
-from .forms import OrderForm, CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.forms import inlineformset_factory
+from django.shortcuts import redirect, render
+
+from .decorators import unauthenticated_user, allow_users, admin_only
+from .filter import OrderFilter
+from .forms import OrderForm, CreateUserForm, CustomerForm
+from .models import *
 
 
 # Create your views here.
@@ -54,7 +54,6 @@ def registerPage(request):
 
     # Render the registration page template
     return render(request, 'accounts/auth/register.html', context)
-
 
 
 @unauthenticated_user
@@ -140,7 +139,6 @@ def home(request):
     return render(request, 'accounts/dashboard.html', context)
 
 
-
 @login_required()  # Decorator to ensure the user is logged in
 @allow_users(allowed_roles=['admin'])  # Custom decorator to check user roles
 def products(req):
@@ -171,7 +169,6 @@ def products(req):
 
     # Render the products listing page template
     return render(req, 'accounts/products.html', context)
-
 
 
 @login_required()  # Decorator to ensure the user is logged in
@@ -217,7 +214,6 @@ def customer(req, customer):
 
     # Render the customer details page template
     return render(req, 'accounts/customers.html', context)
-
 
 
 @login_required()  # Decorator to ensure the user is logged in
@@ -331,3 +327,16 @@ def deleteOrder(req, order):
         return redirect('/')
     context = {'item': order}
     return render(req, 'accounts/utility/delete.html', context)
+
+
+@login_required()
+@allow_users(allowed_roles=['customer'])
+def userSetting(request):
+    user = request.user.customer
+    form = CustomerForm(instance=user)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+    context = {'form': form}
+    return render(request, 'accounts/utility/settings.html', context)

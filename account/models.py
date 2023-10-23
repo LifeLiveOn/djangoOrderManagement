@@ -7,10 +7,11 @@ from django.contrib.auth.models import User
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=100, null=True)
     email = models.CharField(max_length=100, null=True)
+    profile_pic = models.ImageField(null=True, blank=True,default="profile_pic.jpg")
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
